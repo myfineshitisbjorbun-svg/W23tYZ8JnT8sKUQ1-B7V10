@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WanzX Prompt</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 50%, #141414 100%);
+            background-attachment: fixed;
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Enhanced floating particles background effect */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: floatParticle 15s linear infinite;
+            pointer-events: none;
+        }
+
+        .particle:nth-child(odd) {
+            animation-duration: 20s;
+            animation-delay: -5s;
+        }
+
+        .particle:nth-child(even) {
+            animation-duration: 25s;
+            animation-delay: -10s;
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(100vh) translateX(0) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+                scale: 1;
+            }
+            90% {
+                opacity: 1;
+                scale: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(100px) scale(0);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-toggle span {
+            width: 100%;
+            height: 2.5px;
+            background: #fff;
+            transition: 0.3s;
+            border-radius: 1px;
+        }
+
+        .menu-toggle.open span:nth-child(1) {
+            transform: rotate(45deg) translate(4px, 4px);
+        }
+
+        .menu-toggle.open span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.open span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -5px);
+        }
+
+        .menu {
+            position: absolute;
+            top: 65px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(15px);
+            width: 220px;
+            display: none;
+            flex-direction: column;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .menu.show {
+            display: flex;
+        }
+
+        .menu a {
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .menu a:hover {
+            color: #b0b0b0;
+            transform: translateX(8px);
+        }
+
+        .menu a:last-child {
+            border-bottom: none;
+        }
+
+        .footer-menu {
+            margin-top: 15px;
+            font-size: 11px;
+            color: #aaa;
+            text-align: center;
+        }
+
+        .logo {
+            width: 130px;
+            height: auto;
+            margin: 25px auto 10px;
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.4));
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.02);
+        }
+
+        .title {
+            font-family: 'Arial Black', sans-serif;
+            font-size: 2.8em;
+            font-weight: 900;
+            margin: 8px 0 25px;
+            letter-spacing: -1.5px;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .search-container {
+            margin: 25px auto;
+            max-width: 650px;
+            position: relative;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 17px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(8px);
+            color: #fff;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-bar:focus {
+            border-color: #ccc;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .search-bar::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .prompts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 40px auto;
+            max-width: 1100px;
+            justify-items: center;
+            padding: 0 10px;
+        }
+
+        .prompt-item {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.4s ease;
+            width: 100%;
+            max-width: 280px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(40px);
+            animation: slideUp 0.7s ease-out forwards;
+        }
+
+        .prompt-item:nth-child(1) { animation-delay: 0.1s; }
+        .prompt-item:nth-child(2) { animation-delay: 0.2s; }
+        .prompt-item:nth-child(3) { animation-delay: 0.3s; }
+        .prompt-item:nth-child(4) { animation-delay: 0.4s; }
+        .prompt-item:nth-child(5) { animation-delay: 0.5s; }
+        .prompt-item:nth-child(6) { animation-delay: 0.6s; }
+
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .prompt-item:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 12px 30px rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .prompt-logo {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 12px;
+        }
+
+        .prompt-item a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        .prompt-item a:hover {
+            color: #ddd;
+        }
+
+        .footer {
+            margin-top: 50px;
+            padding: 15px;
+            font-size: 13px;
+            color: #aaa;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .disclaimer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #ccc;
+            font-weight: 500;
+        }
+
+        .credit {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        /* Scroll-triggered fade-in for additional elements */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.2em;
+            }
+            .prompts {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .menu {
+                width: 180px;
+            }
+            .search-bar {
+                font-size: 15px;
+                padding: 12px 16px;
+            }
+            .logo {
+                width: 110px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating particles -->
+    <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+    <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+    <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
+    <div class="particle" style="left: 40%; animation-delay: 6s;"></div>
+    <div class="particle" style="left: 50%; animation-delay: 8s;"></div>
+    <div class="particle" style="left: 60%; animation-delay: 10s;"></div>
+    <div class="particle" style="left: 70%; animation-delay: 12s;"></div>
+    <div class="particle" style="left: 80%; animation-delay: 14s;"></div>
+    <div class="particle" style="left: 90%; animation-delay: 16s;"></div>
+    <div class="particle" style="left: 15%; animation-delay: 18s;"></div>
+    <div class="particle" style="left: 25%; animation-delay: 20s;"></div>
+    <div class="particle" style="left: 35%; animation-delay: 22s;"></div>
+    <div class="particle" style="left: 45%; animation-delay: 24s;"></div>
+    <div class="particle" style="left: 55%; animation-delay: 26s;"></div>
+    <div class="particle" style="left: 65%; animation-delay: 28s;"></div>
+    <div class="particle" style="left: 75%; animation-delay: 30s;"></div>
+    <div class="particle" style="left: 85%; animation-delay: 32s;"></div>
+    <div class="particle" style="left: 95%; animation-delay: 34s;"></div>
+
+    <div class="header">
+        <button class="menu-toggle" id="menuToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="menu" id="menu">
+            <a href="https://wa.me/62085966198748" target="_blank">Contact wanz</a>
+            <a href="#home">All prompt</a>
+            <a href="#search" id="searchLink">Search</a>
+            <div class="footer-menu">© xy chan community 2026</div>
+        </div>
+    </div>
+
+    <div class="container" id="home">
+        <img src="https://i.postimg.cc/x8WPyYT0/Background-Eraser-20260128-173856882.png" alt="Logo" class="logo">
+        <h1 class="title">WanzX Prompt</h1>
+
+        <div class="search-container fade-in">
+            <input type="text" class="search-bar" placeholder="Search prompts..." id="searchBar">
+        </div>
+
+        <div class="prompts">
+            <div class="prompt-item">
+                <img src="https://i.postimg.cc/CxTVmYkJ/Background-Eraser-20260128-202213541.png" alt="Zip Logo" class="prompt-logo">
+                <a href="path/to/prompt1.zip" download>violet v1</a>
+            </div>
+            <div class="prompt-item">
+                <img src="https://i.postimg.cc/CxTVmYkJ/Background-Eraser-20260128-202213541.png" alt="Zip Logo" class="prompt-logo">
+                <a href="path/to/prompt2.zip" download>bns default</a>
+            </div>
+            <div class="prompt-item">
+                <img src="https://i.postimg.cc/CxTVmYkJ/Background-Eraser-20260128-202213541.png" alt="Zip Logo" class="prompt-logo">
+                <a href="path/to/prompt3.zip" download>wormgpt v2</a>
+            </div>
+            <div class="prompt-item">
+                <img src="https://i.postimg.cc/CxTVmYkJ/Background-Eraser-20260128-202213541.png" alt="Zip Logo" class="prompt-logo">
+                <a href="path/to/prompt4.zip" download>Santa v2</a>
+            </div>
+            <div class="prompt-item">
+                <img src="https://i.postimg.cc/CxTVmYkJ/Background-Eraser-20260128-202213541.png" alt="Zip Logo" class="prompt-logo">
+                <a href="path/to/prompt5.zip" download>DarkNight v2</a>
+            </div>
+            <div class="prompt-item">
+                <img src="https://i.postimg.cc/CxTVmYkJ/Background-Eraser-20260128-202213541.png" alt="Zip Logo" class="prompt-logo">
+                <a href="path/to/prompt6.zip" download>prompt halal version</a>
+            </div>
+        </div>
+
+        <div class="footer fade-in">
+            <div class="disclaimer">For legal content!! Everything you do is not our responsibility!!</div>
+            <div class="credit">© no copyright, by XY Chan community 2026</div>
+        </div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const menu = document.getElementById('menu');
+        const searchLink = document.getElementById('searchLink');
+        const searchBar = document.getElementById('searchBar');
+
+        menuToggle.addEventListener('click', () => {
+            menu.classList.toggle('open');
+            menu.classList.toggle('show');
+        });
+
+        searchLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            searchBar.focus();
+            menu.classList.remove('show');
+            menuToggle.classList.remove('open');
+        });
+
+        // Search functionality
+        searchBar.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const prompts = document.querySelectorAll('.prompt-item');
+            prompts.forEach(prompt => {
+                const text = prompt.textContent.toLowerCase();
+                prompt.style.display = text.includes(query) ? 'block' : 'none';
+            });
+        });
+
+        // Scroll-triggered animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+  </html>
